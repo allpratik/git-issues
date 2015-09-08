@@ -8,14 +8,15 @@
   * Once the issues are received, we classify them on the basis of their ```creation_date```
   * Then we update our counter variables according to the date of creation of particular issue.
   
-##Improvements 
+##Scope of Improvements 
 1. The solution as now displays only first 30 records due to GitHub's pagination. So, to include all the open issues we can parse the link headers and include all the remaining issues.
 2. We need to include local time zone support in order to decide between issue was opened today or yesterday. By default, system considers UTC zone. We can do it by using Moment.JS library to mitigate it.
+3. We can build docker image of above solution and host it on Google's kubernetes.
 
-###Further Improvements
-1. We can include issue's label analysis to exactly pin point that which service people are facinf more problem. If we plotted the same data against time-series, we might even pin point the changes, if any, which could be the probable reason for the issues. It can save tons of time of our support staff.
-2. We can include an analysis
-3. 
+###Further Scope of Improvements
+
+1. We can include issue's label analysis (Simple Word Cloud, maybe) to exactly pin point that which service people are facinf more problem. If we plotted the same data against time-series, we might even pin point the changes, if any, which could be the probable reason for the issues. It can save tons of time of our support staff.
+2. We can include analyze data the frequency of issues according to time, so that we can optimize the timings of support staff.
 
 
 ## Demo
