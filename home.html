@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en-US">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html">
+  <title>Github Issue Stat Tracker Webapp</title>
+  <meta name="author" content="Pratik Khandagale">
+  <link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
+  <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+</head>
+
+<body>
+
+
+  <div id="w">
+    <h1>Github Issue Tracker Webapp</h1>
+    <p>Enter a Github repository link below and click the button to display currently open issues.</p>
+    
+    <input type="text" name="repolink" id="repolink" placeholder="Github Repository Link...">
+    
+    <a href="#" id="submitbutton">Track Issues</a>
+    
+    <div id="apitable" class="clearfix"></div>
+  </div>
+
+
+
+<script type="text/javascript">
+
+$(function(){
+
+  $('#submitbutton').on('click', function(e){
+
+    e.preventDefault();
+
+    $('#apitable').html('<div id="loader"><img src="css/loader.gif" alt="loading..."></div>'); 
+
+        var sysdate = new Date(); 
+        var today = sysdate.getDate(); //This variable stores current system date.
+
+        var day7 = new Date();
+        day7.setDate(day7.getDate() - 7);
+        var dayy7 = day7.getDate();  //This variable stores 7 days before date.
+
+
+        //Below lines extracts the username and repo name from the github url submitted by User.
+        var url = $('#repolink').val(); //.val fucntion extracts the current value from the input box.
+        var urlsplit = url.split("/"); //We split here the user on basis of /
+        var username = urlsplit[3]; //We store here the username (owner of repo), when we encounter 3rd '/'
+        var reponame = urlsplit[4];  // We store here the actual repo name, when we encounter 4th '/'
+        var requri   = 'https://api.github.com/repos/'+username+'/'+reponame+'/issues';  //To call Github API
+        //By default Github API responds with "open" issues only. We can ass extra parameters to get closed issues 
+        //as well.
+
+        
+        requestJSON(requri, function(json) {
+          
+          //if we receive no data from request then we print following message.
+
+          if(json.message == "Not Found" || url == '') {
+            $('#apitable').html("<h2>No User Such Repository Found</h2>");
+          }
+
+      
+           else {
+          // else we have a repo then, we display the number of issues 
+
+            var  today_count = 0;
+            var  week_count = 0;
+            var  past_count = 0;
+          
+
+            //Below function iteartes over each json object to extract it's creation_date and increment the 
+            //appropriate variable.
+          
+           $.each(json, function(index) {
+
+            
+            var date1 = json[index].created_at; //Stores the currnt object's creation date
+            
+            var date = new Date(date1); //Initiates JS date function to further extract data from ISO String format
+            var day = date.getDate();   //Extracts the day value from the date. We can also extract month,yaer,time,etc.                     
+            
+
+            if(day == today) {
+
+                 today_count = today_count + 1; //increments the counter by 1, if issue is opened today.
+            }
+
+            else if((today > day && day >= dayy7)){
+
+                week_count = week_count + 1; //increments the counter by 1, if issue is opened in past 7 days.
+            }
+
+            else {
+
+               past_count = past_count + 1; //increments the counter by 1, if issue is older than 7 days
+            }
+
+         });
+
+        
+        }
+        
+        
+        var total = today_count + week_count + past_count; //It counts the total number of issues.
+        
+        
+        //In below lines result is printed out in html table format.
+
+        var tablehtml = '<table><tr><th>Total Issues</th><td>'+total+'</td></tr><tr><th>Todays Issues</th><td>'+today_count+'</td></tr><tr><th>Past 7 Days Issues</th><td>'+week_count+'</td></tr><tr><th>Issues Open more than 7 Days ago</th><td>'+past_count+'</td></tr></table>';
+
+        
+          $('#apitable').html(tablehtml); //jQuery function to append above html to div with id "apitable"
+          
+      // end else statement
+    }); // end requestJSON Ajax call
+  }); // end click event handler
+  
+  function requestJSON(url, callback) {
+    $.ajax({
+      url: url,
+      complete: function(xhr) {
+        callback.call(null, xhr.responseJSON);
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
