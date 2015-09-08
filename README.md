@@ -15,5 +15,10 @@
 ###Further Improvements
 1. We can include issue's label analysis to exactly pin point that which service people are facinf more problem. If we plotted the same data against time-series, we might even pin point the changes, if any, which could be the probable reason for the issues. It can save tons of time of our support staff.
 2. We can include an analysis
+3. 
+
+
+## Demo
+[GitHub Issue's Stats](https://git-issue.herokuapp.com/)
 
 
